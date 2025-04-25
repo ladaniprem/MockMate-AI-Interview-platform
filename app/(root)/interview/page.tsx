@@ -6,7 +6,9 @@ const Page = async () => {
 
   return (
     <>
-      <h3>Interview generation</h3>
+      <div className="w-full border-b border-gray-200 pb-4 flex justify-center">
+        <h3 className="text-primary font-semibold mt-4">Interview generation</h3>
+      </div>
 
       <Agent
         userName={user?.name || "Guest"}

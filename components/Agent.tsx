@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -29,9 +30,9 @@ const Agent = ({
   questions,
 }: AgentProps) => {
   const router = useRouter();
-  const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
+  const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.FINISHED);
   const [messages, setMessages] = useState<SavedMessage[]>([]);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(true);
   const [lastMessage, setLastMessage] = useState<string>("");
 
   useEffect(() => {
@@ -180,10 +181,13 @@ const Agent = ({
       {messages.length > 0 && (
         <div className="transcript-border">
           <div className="transcript">
-            <p key={lastMessage}
+            <p
+              key={lastMessage}
               className={cn(
                 "transition-opacity duration-500 opacity-0",
-                "animate-fadeIn opacity-100")}>
+                "animate-fadeIn opacity-100"
+              )}
+            >
               {lastMessage}
             </p>
           </div>
