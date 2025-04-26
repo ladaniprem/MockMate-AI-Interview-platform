@@ -11,6 +11,7 @@ import { createFeedback } from "@/lib/actions/general.action";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
+  SETUP = "SETUP",        // Added new status for setup
   CONNECTING = "CONNECTING",
   ACTIVE = "ACTIVE",
   FINISHED = "FINISHED",
@@ -32,7 +33,7 @@ const Agent = ({
   const router = useRouter();
   const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
   const [messages, setMessages] = useState<SavedMessage[]>([]);
-  const [isSpeaking, setIsSpeaking] = useState(true);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [lastMessage, setLastMessage] = useState<string>("");
 
   useEffect(() => {
@@ -113,6 +114,10 @@ const Agent = ({
       }
     }
   }, [messages, callStatus, feedbackId, interviewId, router, type, userId]);
+
+  const handleSetup = () => {
+    setCallStatus(CallStatus.SETUP);
+  };
 
   const handleCall = async () => {
     setCallStatus(CallStatus.CONNECTING);
@@ -195,23 +200,33 @@ const Agent = ({
       )}
 
       <div className="w-full flex justify-center">
-        {callStatus !== "ACTIVE" ? (
-          <button className="relative btn-call" onClick={() => handleCall()}>
-            <span
-              className={cn(
-                "absolute animate-ping rounded-full opacity-75",
-                callStatus !== "CONNECTING" && "hidden"
-              )}
-            />
-
-            <span className="relative">
-              {callStatus === "INACTIVE" || callStatus === "FINISHED"
-                ? "Call"
-                : ". . ."}
-            </span>
+        {callStatus === CallStatus.INACTIVE && (
+          <button className="btn-call" onClick={handleSetup}>
+            Setup Interview
           </button>
-        ) : (
-          <button className="btn-disconnect" onClick={() => handleDisconnect()}>
+        )}
+        
+        {callStatus === CallStatus.SETUP && (
+          <>
+            <div className="interview-setup mb-4">
+              <h3 className="text-xl font-semibold mb-2">Interview Ready</h3>
+              <p className="mb-4">Please ensure your microphone is working properly before starting.</p>
+            </div>
+            <button className="btn-call" onClick={handleCall}>
+              Start Call
+            </button>
+          </>
+        )}
+        
+        {callStatus === CallStatus.CONNECTING && (
+          <button className="relative btn-call">
+            <span className="absolute animate-ping rounded-full opacity-75" />
+            <span className="relative">. . .</span>
+          </button>
+        )}
+        
+        {callStatus === CallStatus.ACTIVE && (
+          <button className="btn-disconnect" onClick={handleDisconnect}>
             End
           </button>
         )}

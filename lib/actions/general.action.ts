@@ -97,8 +97,6 @@ export async function getLatestInterviews(
 
   const interviews = await db
     .collection("interviews")
-    .orderBy("createdAt", "desc")
-    .where("finalized", "==", true)
     .where("userId", "!=", userId)
     .limit(limit)
     .get();
@@ -114,8 +112,8 @@ export async function getInterviewsByUserId(
 ): Promise<Interview[] | null> {
   const interviews = await db
     .collection("interviews")
+    .orderBy("createdAt")
     .where("userId", "==", userId)
-    .orderBy("createdAt", "desc")
     .get();
 
   return interviews.docs.map((doc) => ({
