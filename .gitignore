@@ -43,3 +43,6 @@ next-env.d.ts
 
 #Ignore vscode AI rules
 .github\instructions\codacy.instructions.md
+
+# Firebase service account credentials
+attachments/mockmate-3a304-firebase-adminsdk-fbsvc-e3e0f18ab5.json
