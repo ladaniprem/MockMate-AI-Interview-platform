@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   const { type, role, level, techstack, amount, userid } = await request.json();
 
   try {
-    const { text: questionsText } = await generateText({
+    const { text: questions } = await generateText({
       model: google("gemini-2.0-flash-001"),
       prompt: `Prepare questions for a job interview.
         The job role is ${role}.
@@ -25,46 +25,24 @@ export async function POST(request: Request) {
     `,
     });
 
-    let questions: string[];
-    try {
-      questions = JSON.parse(questionsText);
-    } catch {
-      // If Gemini wraps them in markdown code block, extract the JSON
-      const jsonMatch = questionsText.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        questions = JSON.parse(jsonMatch[0]);
-      } else {
-        // Fallback: split by newlines and filter
-        questions = questionsText
-          .split("\n")
-          .map((q) => q.replace(/^\d+[\.\)]\s*/, "").trim())
-          .filter((q) => q.length > 0);
-      }
-    }
-
-    if (!Array.isArray(questions) || questions.length === 0) {
-      questions = ["Tell me about yourself.", "What are your strengths and weaknesses?", "Why do you want this role?"];
-    }
-
     const interview = {
       role: role,
       type: type,
       level: level,
       techstack: techstack.split(","),
-      questions,
+      questions: JSON.parse(questions),
       userId: userid,
       finalized: true,
       coverImage: getRandomInterviewCover(),
       createdAt: new Date().toISOString(),
     };
 
-    const docRef = await db.collection("interviews").add(interview);
+    await db.collection("interviews").add(interview);
 
-    return Response.json({ success: true, id: docRef.id }, { status: 200 });
+    return Response.json({ success: true }, { status: 200 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("Error generating interview:", message);
-    return Response.json({ success: false, error: message }, { status: 500 });
+    console.error("Error:", error);
+    return Response.json({ success: false, error: error }, { status: 500 });
   }
 }
 

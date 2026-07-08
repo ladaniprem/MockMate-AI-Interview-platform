@@ -35,7 +35,6 @@ const Agent = ({
   const [messages, setMessages] = useState<SavedMessage[]>([]);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [lastMessage, setLastMessage] = useState<string>("");
-  const [isFeedbackGenerating, setIsFeedbackGenerating] = useState(false);
 
   useEffect(() => {
     const onCallStart = () => {
@@ -88,31 +87,8 @@ const Agent = ({
     if (messages.length > 0) {
       setLastMessage(messages[messages.length - 1].content);
     }
-  }, [messages]);
 
-  useEffect(() => {
-    if (callStatus !== CallStatus.FINISHED || isFeedbackGenerating) return;
-
-    const handleGenerateFeedback = async () => {
-      setIsFeedbackGenerating(true);
-
-      if (type === "generate") {
-        router.push("/");
-        return;
-      }
-
-      if (!interviewId || !userId) {
-        console.log("Missing interviewId or userId");
-        router.push("/");
-        return;
-      }
-
-      if (messages.length === 0) {
-        console.log("No transcript messages to analyze");
-        router.push("/");
-        return;
-      }
-
+    const handleGenerateFeedback = async (messages: SavedMessage[]) => {
       console.log("handleGenerateFeedback");
 
       const { success, feedbackId: id } = await createFeedback({
@@ -130,9 +106,14 @@ const Agent = ({
       }
     };
 
-    handleGenerateFeedback();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [callStatus]);
+    if (callStatus === CallStatus.FINISHED) {
+      if (type === "generate") {
+        router.push("/");
+      } else {
+        handleGenerateFeedback(messages);
+      }
+    }
+  }, [messages, callStatus, feedbackId, interviewId, router, type, userId]);
 
   const handleSetup = () => {
     setCallStatus(CallStatus.SETUP);

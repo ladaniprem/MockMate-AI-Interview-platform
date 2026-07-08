@@ -9,8 +9,6 @@ interface InterviewData {
   techStack: string[];
   duration: number;
   profileImage: string;
-  level: string;
-  amount: number;
 }
 
 const InterviewSetup = ({ onStartInterview }: { onStartInterview: (data: InterviewData) => void }) => {
@@ -19,14 +17,10 @@ const InterviewSetup = ({ onStartInterview }: { onStartInterview: (data: Intervi
   const [techStack, setTechStack] = useState<string[]>([]);
   const [duration, setDuration] = useState(15);
   const [profileImage, setProfileImage] = useState<string>("");
-  const [level, setLevel] = useState("Junior");
-  const [amount, setAmount] = useState(5);
 
   const interviewTypes = ["Technical", "HR", "Managerial", "Behavioral"];
   const durationOptions = [10, 15, 20, 30, 45, 60];
   const techOptions = ["React", "Node.js", "TypeScript", "Python", "Java", "AWS", "SQL", "MongoDB"];
-  const levelOptions = ["Junior", "Mid-Level", "Senior"];
-  const amountOptions = [3, 5, 7, 10];
 
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,8 +48,6 @@ const InterviewSetup = ({ onStartInterview }: { onStartInterview: (data: Intervi
       techStack,
       duration,
       profileImage,
-      level,
-      amount,
     });
   };
 
@@ -168,46 +160,6 @@ const InterviewSetup = ({ onStartInterview }: { onStartInterview: (data: Intervi
                 onClick={() => setDuration(time)}
               >
                 {time}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Experience Level */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Experience Level</label>
-          <div className="grid grid-cols-3 gap-3">
-            {levelOptions.map((opt) => (
-              <button
-                key={opt}
-                className={`py-2 px-4 rounded-lg transition-all ${
-                  level === opt
-                    ? "bg-purple-600 text-white shadow-md shadow-purple-500/20"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                }`}
-                onClick={() => setLevel(opt)}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Number of Questions */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Number of Questions</label>
-          <div className="flex flex-wrap gap-3">
-            {amountOptions.map((num) => (
-              <button
-                key={num}
-                className={`py-2 px-4 rounded-lg transition-all transform hover:scale-105 ${
-                  amount === num
-                    ? "bg-purple-600 text-white shadow-md shadow-purple-500/20"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                }`}
-                onClick={() => setAmount(num)}
-              >
-                {num}
               </button>
             ))}
           </div>
