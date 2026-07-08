@@ -53,12 +53,12 @@ const Page = () => {
         router.push(`/interview/${result.id}`);
       } else {
         console.error("Failed to generate interview:", result);
-        alert("Failed to generate interview. Please try again.");
+        alert(result.error ? `Error: ${result.error}` : "Failed to generate interview. Please try again.");
         setIsGenerating(false);
       }
     } catch (error) {
       console.error("Error generating interview:", error);
-      alert("An error occurred. Please try again.");
+      alert(`An error occurred: ${error instanceof Error ? error.message : "Please try again."}`);
       setIsGenerating(false);
     }
   };
